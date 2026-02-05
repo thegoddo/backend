@@ -11,6 +11,10 @@ import { Server } from "http";
 import { connectDB } from "./utils/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
+import conversationRoutes from "./routes/conversationRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
+
+import RedisService from "./services/RedisService.js";
 
 const app = express();
 const httpServer = http.createServer();
@@ -23,6 +27,12 @@ app.use(
 );
 
 app.use(cookieParser());
+app.use(express.json());
+
+//routes
+app.use("/api/auth", authRoutes);
+app.use("/api/conversations", conversationRoutes);
+app.use("/api/conversations", messageRoutes);
 
 try {
   await connectDB();
