@@ -5,7 +5,12 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
+
+import { Server } from "http";
+
 import { connectDB } from "./utils/db.js";
+
+import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 const httpServer = http.createServer();
