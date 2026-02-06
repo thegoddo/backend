@@ -6,7 +6,7 @@ import RedisService from "../services/RedisService.js";
 class ConversationController {
   static async checkConnectCode(req, res) {
     try {
-      const userid = req.user._id;
+      const userId = req.user._id;
       const { connectCode } = req.query;
 
       const friend = await User.findOne({ connectCode });
@@ -39,7 +39,7 @@ class ConversationController {
   static async getConversations(req, res) {
     try {
       const userId = req.user._id;
-      const frinedships = await Friendship.find({
+      const friendships = await Friendship.find({
         $or: [{ requester: userId }, { recipient: userId }],
       })
         .populate([
@@ -62,7 +62,7 @@ class ConversationController {
       // get conversations
       const conversations = await Conversation.find({
         participants: {
-          $all: [userid],
+          $all: [userId],
           $in: friendIds,
           $size: 2,
         },

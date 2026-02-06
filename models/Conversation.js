@@ -30,7 +30,7 @@ conversationSchema.index(
 );
 
 conversationSchema.pre("save", function (next) {
-  if (this.participants && this.participants.length == 2) {
+  if (this.participants && this.participants.length === 2) {
     this.participants = this.pariticipants.map((p) => p.toString()).sort();
   }
 

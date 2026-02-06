@@ -37,7 +37,7 @@ export const notifyConversationOnlineStatus = async (io, socket, online) => {
   }
 };
 
-export const conversationRequest = async (io, sokcet, data) => {
+export const conversationRequest = async (io, socket, data) => {
   try {
     const userId = socket.userId;
     const user = socket.user;
@@ -74,7 +74,7 @@ export const conversationRequest = async (io, sokcet, data) => {
 
     const friendship = await Friendship.create({
       requester: userId,
-      recipient: friend._d,
+      recipient: friend._id,
     });
 
     const conversation = await Conversation.create({
