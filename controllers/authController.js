@@ -36,7 +36,7 @@ class AuthController {
         username,
         fullName,
         email,
-        password,
+        password: hashedPassword,
         connectCode: await generateUniqueConnectCode(),
       });
       await user.save();
