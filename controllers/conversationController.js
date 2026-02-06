@@ -4,7 +4,7 @@ import User from "../models/User.js";
 import RedisService from "../services/RedisService.js";
 
 class ConversationController {
-  static async checkConeectCode(req, res) {
+  static async checkConnectCode(req, res) {
     try {
       const userid = req.user._id;
       const { connectCode } = req.query;

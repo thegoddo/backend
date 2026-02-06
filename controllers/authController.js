@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/User";
-import generateUniqueConnectCode from "../utils/generateUniqueConnectCode";
+import User from "../models/User.js";
+import generateUniqueConnectCode from "../utils/generateUniqueConnectCode.js";
 
 class AuthController {
   static async register(req, res) {

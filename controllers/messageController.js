@@ -1,7 +1,7 @@
 import Message from "../models/Message.js";
 
 class MessageController {
-  static async getMessage(req, res) {
+  static async getMessages(req, res) {
     try {
       const { conversationId } = req.params;
       const { cursor } = req.query;
