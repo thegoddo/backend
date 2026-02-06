@@ -6,7 +6,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
 
-import { Server } from "http";
+import { Server } from "socket.io";
 
 import { connectDB } from "./utils/db.js";
 
@@ -14,10 +14,12 @@ import authRoutes from "./routes/authRoutes.js";
 import conversationRoutes from "./routes/conversationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 
+import { initializeSocket } from "./socket.js";
+import { socketAuthMiddleware } from "./socket/socketAuthMiddleware.js";
 import RedisService from "./services/RedisService.js";
 
 const app = express();
-const httpServer = http.createServer();
+const httpServer = http.createServer(app);
 
 app.use(
   cors({
@@ -33,6 +35,20 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/conversations", conversationRoutes);
 app.use("/api/conversations", messageRoutes);
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.CLIENT_ORIGIN,
+    credentials: true,
+    methods: ["GET", "POST"],
+  },
+  pingInterval: 25000,
+  pingTimeout: 60000,
+});
+
+io.use(socketAuthMiddleware);
+await initializeSocket(io);
+await RedisService.initialize();
 
 try {
   await connectDB();
