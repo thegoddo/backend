@@ -3,7 +3,7 @@ import User from "../models/User.js";
 import Conversation from "../models/Conversation.js";
 import Message from "../models/Message.js";
 
-import { getChatRooms } from "./helpers.js";
+import { getChatRoom } from "./helpers.js";
 import RedisService from "../services/RedisService.js";
 
 export const notifyConversationOnlineStatus = async (io, socket, online) => {
@@ -190,7 +190,7 @@ export const conversationSendMessage = async (io, socket, data) => {
     const covnersation = await Conversation.findById(conversationId);
     if (!conversation) {
       socket.emit("conversation:send-message:error", {
-        error: "No conversatiin found",
+        error: "No conversation found",
       });
       return;
     }
@@ -244,7 +244,7 @@ export const conversationSendMessage = async (io, socket, data) => {
   }
 };
 
-export const covnersationTyping = async (io, socket, data) => {
+export const conversationTyping = async (io, socket, data) => {
   try {
     const { friendId, isTyping } = data;
     const userId = socket.userId;
