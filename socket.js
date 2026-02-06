@@ -1,4 +1,4 @@
-import RedisService from "./services/RedisService";
+import RedisService from "./services/RedisService.js";
 import { leaveAllRooms } from "./socket/helpers.js";
 import {
   conversationMarkAsRead,
