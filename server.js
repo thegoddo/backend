@@ -23,7 +23,10 @@ const httpServer = http.createServer(app);
 
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN,
+    origin: [
+      process.env.CLIENT_ORIGIN,
+      "https://frontend-nu-eight-40.vercel.app",
+    ],
     credentials: true,
   }),
 );
