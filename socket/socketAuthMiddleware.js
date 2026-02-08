@@ -21,6 +21,6 @@ export const socketAuthMiddleware = async (socket, next) => {
     next();
   } catch (error) {
     console.error("Socket auth error", error);
-    next(new Error("Authentication Failed"));
+    next(new Error("Authentication failed"));
   }
 };

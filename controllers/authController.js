@@ -9,13 +9,13 @@ class AuthController {
       const { fullName, username, email, password } = req.body;
 
       if (!fullName || !username || !email || !password) {
-        res.status(400).json({ message: "All fields are required" });
+        return res.status(400).json({ message: "All fields are required" });
       }
 
       if (password.length < 6) {
         return res
           .status(400)
-          .json({ message: "Password must be at least 6 characters long" });
+          .json({ message: "Password must be at lesat 6 characters long" });
       }
 
       const existingUser = await User.findOne({
@@ -28,7 +28,7 @@ class AuthController {
           .json({ message: "User already exists with username or email" });
       }
 
-      // salt password
+      // hash password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -39,11 +39,12 @@ class AuthController {
         password: hashedPassword,
         connectCode: await generateUniqueConnectCode(),
       });
+
       await user.save();
 
       res.status(201).json({ success: true });
     } catch (error) {
-      console.error("Registration Error: ", error);
+      console.error("Registration error", error);
       res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -57,6 +58,7 @@ class AuthController {
       }
 
       const user = await User.findOne({ email });
+
       if (!user) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
@@ -87,7 +89,7 @@ class AuthController {
         },
       });
     } catch (error) {
-      console.error("Login error: ", error);
+      console.error("Login error", error);
       res.status(500).json({ message: "Internal server error" });
     }
   }

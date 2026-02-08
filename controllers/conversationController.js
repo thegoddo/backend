@@ -11,7 +11,7 @@ class ConversationController {
 
       const friend = await User.findOne({ connectCode });
 
-      if (!friend || friend._id.toString() == userId.toString()) {
+      if (!friend || friend._id.toString() === userId.toString()) {
         return res.status(400).json({ message: "Invalid connect ID" });
       }
 
@@ -23,7 +23,7 @@ class ConversationController {
       });
 
       if (existingFriendship) {
-        return res.status(400).json({ message: "Frinedship already exists" });
+        return res.status(400).json({ message: "Friendship already exists" });
       }
 
       res.json({
@@ -39,6 +39,8 @@ class ConversationController {
   static async getConversations(req, res) {
     try {
       const userId = req.user._id;
+
+      // get friendships for this user
       const friendships = await Friendship.find({
         $or: [{ requester: userId }, { recipient: userId }],
       })
@@ -54,7 +56,7 @@ class ConversationController {
 
       // extract friend ids
       const friendIds = friendships.map((friend) =>
-        friend.requester._id.toString() == userId.toString()
+        friend.requester._id.toString() === userId.toString()
           ? friend.recipient._id.toString()
           : friend.requester._id.toString(),
       );
@@ -69,16 +71,17 @@ class ConversationController {
       });
 
       // create conversations map
-      const conversationMap = new Map();
+      const conversationsMap = new Map();
       conversations.forEach((conversation) => {
         const friendId = conversation.participants.find(
-          (p) => p.toString() != userId.toString(),
+          (p) => p.toString() !== userId.toString(),
         );
-        conversationMap.set(friendId._id.toString(), conversation);
+        // conversationsMap.set(friendId._id.toString(), conversation);
+        conversationsMap.set(friendId.toString(), conversation);
       });
 
       // create conversations response data
-      const conversationData = await Promise.all([
+      const conversationsData = await Promise.all([
         ...friendships.map(async (friendship) => {
           const isRequester =
             friendship.requester._id.toString() === userId.toString();
@@ -86,20 +89,20 @@ class ConversationController {
             ? friendship.recipient
             : friendship.requester;
 
-          const conversation = conversationMap.get(friend._id.toString());
+          const conversation = conversationsMap.get(friend._id.toString());
 
           return {
-            conversationId: conversation._id,
-            lastMessage: conversation.lastMessage || null,
+            conversationId: conversation.id,
+            lastMessage: conversation.lastMessagePreview || null,
             unreadCounts: {
               [friendship.requester._id.toString()]:
-                conversation.unreadcounts.get(
+                conversation.unreadCounts.get(
                   friendship.requester._id.toString(),
-                ),
+                ) || 0,
               [friendship.recipient._id.toString()]:
-                conversation.unreadcounts.get(
+                conversation.unreadCounts.get(
                   friendship.recipient._id.toString(),
-                ),
+                ) || 0,
             },
             friend: {
               id: friend._id.toString(),
@@ -111,12 +114,12 @@ class ConversationController {
           };
         }),
       ]);
-      res.json({ data: conversationData });
+
+      res.json({ data: conversationsData });
     } catch (error) {
       console.error("Error fetching conversations", error);
       res.status(500).json({ message: "Internal server error" });
     }
   }
 }
-
 export default ConversationController;

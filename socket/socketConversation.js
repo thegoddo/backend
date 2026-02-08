@@ -33,7 +33,7 @@ export const notifyConversationOnlineStatus = async (io, socket, online) => {
       });
     });
   } catch (error) {
-    console.log("notifyConversationOnlineStatus", error);
+    console.error("notifyConversationOnlineStatus", error);
   }
 };
 
@@ -64,7 +64,6 @@ export const conversationRequest = async (io, socket, data) => {
         { requester: friend._id, recipient: userId },
       ],
     });
-
     if (existingFriendship) {
       socket.emit("conversation:request:error", {
         error: "Friendship already exists",
@@ -95,7 +94,7 @@ export const conversationRequest = async (io, socket, data) => {
     io.to(userId.toString()).emit("conversation:accept", {
       ...conversationData,
       friend: {
-        id: friend._id,
+        id: friend.id,
         fullName: friend.fullName,
         username: friend.username,
         connectCode: friend.connectCode,
@@ -151,7 +150,7 @@ export const conversationMarkAsRead = async (io, socket, data) => {
     conversation.unreadCounts.set(userId.toString(), 0);
     await conversation.save();
 
-    const room = getChatRoom(userId.toString(), 0);
+    const room = getChatRoom(userId.toString(), friendId);
     io.to(room).emit("conversation:update-unread-counts", {
       conversationId: conversation._id.toString(),
       unreadCounts: {
@@ -160,7 +159,7 @@ export const conversationMarkAsRead = async (io, socket, data) => {
       },
     });
   } catch (error) {
-    console.error("Error marking conversation  as read", error);
+    console.error("Error marking conversation as read", error);
     socket.emit("conversation:mark-as-read:error", {
       error: "Error: conversation:mark-as-read:error",
     });
@@ -187,7 +186,7 @@ export const conversationSendMessage = async (io, socket, data) => {
       return;
     }
 
-    const covnersation = await Conversation.findById(conversationId);
+    const conversation = await Conversation.findById(conversationId);
     if (!conversation) {
       socket.emit("conversation:send-message:error", {
         error: "No conversation found",
@@ -200,7 +199,6 @@ export const conversationSendMessage = async (io, socket, data) => {
       sender: userId,
       content,
     });
-
     await message.save();
 
     const currentUnreadCount = conversation.unreadCounts.get(friendId) || 0;
@@ -218,7 +216,8 @@ export const conversationSendMessage = async (io, socket, data) => {
       read: message.read,
     };
 
-    const updateConversation = await Conversation.findById(conversationId);
+    const updatedConversation = await Conversation.findById(conversationId);
+
     const room = getChatRoom(userId, friendId);
 
     io.to(room).emit("conversation:new-message", {
@@ -228,9 +227,9 @@ export const conversationSendMessage = async (io, socket, data) => {
 
     io.to(room).emit("conversation:update-conversation", {
       conversationId: conversation.id,
-      lastMessage: updateConversation.lastMessagePreview,
+      lastMessage: updatedConversation.lastMessagePreview,
       unreadCounts: {
-        [userId.toString()]: updateConversation.unreadCounts.get(
+        [userId.toString()]: updatedConversation.unreadCounts.get(
           userId.toString(),
         ),
         [friendId]: updatedConversation.unreadCounts.get(friendId),
@@ -256,6 +255,6 @@ export const conversationTyping = async (io, socket, data) => {
       isTyping,
     });
   } catch (error) {
-    console.error("Error sending convesation typing state", error);
+    console.error("Error sending conversation typing state", error);
   }
 };

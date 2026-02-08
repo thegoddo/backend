@@ -6,7 +6,7 @@ export const getChatRoom = (userId1, userId2) => {
 export const leaveAllRooms = (socket) => {
   const rooms = Array.from(socket?.rooms ?? []);
   rooms.forEach((room) => {
-    if (room.startWith("chat_")) {
+    if (room.startsWith("chat_")) {
       socket.leave(room);
     }
   });

@@ -31,6 +31,7 @@ class RedisService {
       console.log("Redis disconnected!");
     }
   }
+
   async _safe(action, fallback = null) {
     if (!this.client) {
       await this.initialize();
@@ -53,7 +54,7 @@ class RedisService {
     });
   }
 
-  async getUserSessionCount(userId) {
+  async getUserSessionsCount(userId) {
     return await this._safe(async () => {
       return this.client.sCard(`user:${userId}:sessions`);
     }, 0);
@@ -64,21 +65,21 @@ class RedisService {
       const key = `user:${userId}:sessions`;
       await this.client.sRem(key, socketId);
 
-      const remaining = await this.getUserSessionCount(userId);
+      const remaining = await this.getUserSessionsCount(userId);
       if (remaining == 0) {
         await this.client.del(key);
       }
     });
   }
 
-  async removeAllUserSession(userId) {
+  async removeAllUserSessions(userId) {
     await this._safe(async () => {
       await this.client.del(`user:${userId}:sessions`);
     });
   }
 
   async isUserOnline(userId) {
-    const count = await this.getUserSessionCount(userId);
+    const count = await this.getUserSessionsCount(userId);
     return count > 0;
   }
 }

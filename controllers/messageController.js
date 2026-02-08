@@ -10,7 +10,7 @@ class MessageController {
       const query = { conversation: conversationId };
 
       if (cursor) {
-        query.createAt = { $lt: new Date(cursor) };
+        query.createdAt = { $lt: new Date(cursor) };
       }
 
       let messages = await Message.find(query)
@@ -23,12 +23,13 @@ class MessageController {
         messages.length > 0
           ? messages[messages.length - 1].createdAt.toISOString()
           : null;
+
       messages = messages.reverse();
 
       res.json({
         messages,
         nextCursor,
-        hasNext: Message.length === limit,
+        hasNext: messages.length === limit,
       });
     } catch (error) {
       console.error("Error fetching messages", error);

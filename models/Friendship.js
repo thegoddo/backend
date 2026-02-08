@@ -8,7 +8,6 @@ const friendshipSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-
     recipient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -20,4 +19,5 @@ const friendshipSchema = new mongoose.Schema(
 );
 
 friendshipSchema.index({ requester: 1, recipient: 1 }, { unique: true });
+
 export default mongoose.model("Friendship", friendshipSchema);
