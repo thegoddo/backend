@@ -41,11 +41,11 @@ app.use("/api/conversations", conversationRoutes);
 app.use("/api/conversations", messageRoutes);
 
 const io = new Server(httpServer, {
-  cors: {
-    origin: process.env.CLIENT_ORIGIN,
-    credentials: true,
-    methods: ["GET", "POST"],
-  },
+  origin: [
+    process.env.CLIENT_ORIGIN,
+    "https://frontend-nu-eight-40.vercel.app",
+    "https://frontend-git-main-biswajit-shaws-projects.vercel.app",
+  ],
   pingInterval: 25000,
   pingTimeout: 60000,
 });
