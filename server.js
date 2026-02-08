@@ -26,6 +26,7 @@ app.use(
     origin: [
       process.env.CLIENT_ORIGIN,
       "https://frontend-nu-eight-40.vercel.app",
+      "https://frontend-git-main-biswajit-shaws-projects.vercel.app",
     ],
     credentials: true,
   }),
