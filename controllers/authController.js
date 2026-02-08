@@ -76,7 +76,8 @@ class AuthController {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: "strict",
-        secure: process.env.NODE_ENV !== "development",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // must be none for vercel -> render
+        secure: process.env.NODE_ENV === "production",
       });
 
       res.status(200).json({
