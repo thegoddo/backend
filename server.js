@@ -18,6 +18,8 @@ import { initializeSocket } from "./socket.js";
 import { socketAuthMiddleware } from "./socket/socketAuthMiddleware.js";
 import RedisService from "./services/RedisService.js";
 
+import upladRoutes from "./routes/uploadRoutes";
+
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -39,6 +41,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/conversations", conversationRoutes);
 app.use("/api/conversations", messageRoutes);
+app.use("/api/upload", upladRoutes);
 
 const io = new Server(httpServer, {
   cors: {
