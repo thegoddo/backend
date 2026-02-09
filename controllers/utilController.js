@@ -17,6 +17,14 @@ export const getLinkPreview = async (req, res) => {
       timeout: 5000,
     });
 
+    // 1. FIX: Load the HTML into Cheerio
+    const $ = cheerio.load(data);
+
+    // 2. FIX: Define the helper function
+    const getMetaTag = (name) =>
+      $(`meta[property="${name}"]`).attr("content") ||
+      $(`meta[name="${name}"]`).attr("content");
+
     const preview = {
       url,
       title: getMetaTag("og:title") || $("title").text() || "",
@@ -28,6 +36,7 @@ export const getLinkPreview = async (req, res) => {
 
     res.json(preview);
   } catch (error) {
+    console.error("Link preview error:", error.message); // Log error to see it in terminal
     res.status(500).json({ message: "Failed to fetch preview" });
   }
 };
