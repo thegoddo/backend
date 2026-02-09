@@ -1,6 +1,6 @@
 import multer from "multer";
 import sharp from "sharp";
-import imagekit from "../utils/imagekit";
+import imagekit from "../utils/imagekit.js";
 
 const storage = multer.memoryStorage();
 
