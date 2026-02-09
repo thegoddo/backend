@@ -1,6 +1,6 @@
 import express from "express";
 import { getLinkPreview } from "../controllers/utilController.js";
-import authMiddleware from "../middlewares/authMiddleware";
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
