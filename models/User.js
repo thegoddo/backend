@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     minLength: 6,
   },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default mongoose.model("User", userSchema);
