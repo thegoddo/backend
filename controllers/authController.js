@@ -5,6 +5,9 @@ import generateUniqueConnectCode from "../utils/generateUniqueConnectCode.js";
 
 class AuthController {
   static async register(req, res) {
+    const regex =
+      // regex for min: 8, max: 15, one lowercase, one uppercase, one number and one symbol
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$";
     try {
       const { fullName, username, email, password } = req.body;
 
@@ -12,10 +15,18 @@ class AuthController {
         return res.status(400).json({ message: "All fields are required" });
       }
 
-      if (password.length < 6) {
+      if (password.length < 8) {
         return res
           .status(400)
           .json({ message: "Password must be at lesat 6 characters long" });
+      } else if (password.length > 15) {
+        return res.status(400).json({ message: "Password is too lengthy!!!" });
+      }
+
+      if (!regex.test(password)) {
+        return res
+          .status(400)
+          .json({ message: "Password does not met our criteria." });
       }
 
       const existingUser = await User.findOne({
