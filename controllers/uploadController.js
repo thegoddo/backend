@@ -6,7 +6,7 @@ const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
+    cb(null, true); // null mean no error occured, true means to save the file
   } else {
     cb(new Error("Unsupported fiel format. Only JPG and PNG allowed"), false);
   }
