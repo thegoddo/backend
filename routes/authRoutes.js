@@ -8,5 +8,7 @@ router.post("/register", AuthController.register);
 router.post("/login", AuthController.login);
 router.post("/logout", authMiddleware, AuthController.logout);
 router.get("/me", authMiddleware, AuthController.me);
+router.post("/set-otp", AuthController.setOtp);
+router.post("/verify-user", AuthController.verifyUser);
 
 export default router;
