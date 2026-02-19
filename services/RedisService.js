@@ -82,6 +82,46 @@ class RedisService {
     const count = await this.getUserSessionsCount(userId);
     return count > 0;
   }
+
+  async setOtp(email, otp) {
+    await this._safe(async () => {
+      const key = `otp:${email}`;
+      await this.client.set(key, otp);
+      await this.client.expire(key, 300); // Expires in 5 minutes (300 seconds)
+    });
+  }
+
+  async verifyOtp(email, otp) {
+    return await this._safe(async () => {
+      const key = `otp:${email}`;
+      const storedOtp = await this.client.get(key);
+      if (storedOtp === otp) {
+        await this.client.del(key); // OTP used, delete it
+        return true;
+      }
+      return false;
+    }, false);
+  }
+
+  async markEmailVerified(email) {
+    await this._safe(async () => {
+      const key = `verified:${email}`;
+      await this.client.set(key, "true");
+      await this.client.expire(key, 900); // 15 minutes
+    });
+  }
+
+  async checkAndConsumeEmailVerification(email) {
+    return await this._safe(async () => {
+      const key = `verified:${email}`;
+      const isVerified = await this.client.get(key);
+      if (isVerified === "true") {
+        await this.client.del(key);
+        return true;
+      }
+      return false;
+    }, false);
+  }
 }
 
 export default new RedisService();
